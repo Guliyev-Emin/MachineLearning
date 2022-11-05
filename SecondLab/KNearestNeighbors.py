@@ -202,7 +202,7 @@ def main():
             DrawingFeatureSpace(featureSpaceWithoutClass)
             DrawingCircle(featureSpaceWithoutClass, radius)
 
-        EditExcelFile(index, featureSpaceFromExcelData, "nearestFeatureSpace.objectClass", featureSpaceWithClassArray)
+        EditExcelFile(index, featureSpaceFromExcelData, featureSpaceWithoutClass.objectClass, featureSpaceWithClassArray)
         GetWindow(tkinter)
 
 
