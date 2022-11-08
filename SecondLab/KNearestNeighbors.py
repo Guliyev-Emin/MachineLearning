@@ -147,7 +147,7 @@ def SearchIncludedRadiusFeatureSpace(radius, featureSpaces):
             radius += 1
             print("Радиус поиска: " + str(radius))
         else:
-            return includedRadiusFeatureSpace
+            return radius, includedRadiusFeatureSpace
 
 
 def GetClass(featureSpaces, radius):
@@ -155,7 +155,6 @@ def GetClass(featureSpaces, radius):
     for featureSpace in featureSpaces:
         className.append(featureSpace.objectClass)
     value = Counter(className).most_common(3)
-    print(value)
 
     if value.__len__() == 1:
         return value[0][0]
@@ -163,7 +162,6 @@ def GetClass(featureSpaces, radius):
         counts = list()
         for index in range(value.__len__()):
             counts.append(value[index][1])
-        print(Counter(counts))
         if Counter(counts).__len__() == value.__len__():
             return value[0][0]
         elif counts[0] > Counter(counts).most_common(1)[0][0]:
@@ -189,9 +187,8 @@ def main():
         index, featureSpaceWithoutClass = GetObjectWithoutClass(featureSpaceFromExcelData)
         featureSpaceWithClassArray = GetListWithExistingObjectClass(featureSpaceFromExcelData, featureSpaceWithoutClass)
         radius = 3.5
-        featureSpacesIncludedRadius = SearchIncludedRadiusFeatureSpace(radius, featureSpaceWithClassArray)
+        radius, featureSpacesIncludedRadius = SearchIncludedRadiusFeatureSpace(radius, featureSpaceWithClassArray)
         classObject = GetClass(featureSpacesIncludedRadius, radius)
-        print(type(classObject))
         tkinter = GetFeaturesDrawing(featureSpaceWithClassArray)
         if type(classObject) is Space:
             featureSpaceWithoutClass.objectClass = classObject.objectClass
