@@ -77,7 +77,6 @@ def CenterPoint(firstPoint, secondPoint):
 def GetClassData(first, second, newNumber):
     ClassData.remove(first)
     ClassData.remove(second)
-    #ClassData.append(GetNumbersWithoutBrackets(newNumber))
     ClassData.insert(0, GetNumbersWithoutBrackets(newNumber))
 
 
