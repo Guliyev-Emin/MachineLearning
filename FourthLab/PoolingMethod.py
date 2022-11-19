@@ -60,11 +60,8 @@ def CenterPoint(firstPoint, secondPoint):
     newNumber = f'({firstPoint.number}, {secondPoint.number})'
     newNumber = GetNumbersWithoutBrackets(newNumber)
     GetClassData(firstPoint.number, secondPoint.number, newNumber)
-
-    print(str(firstPoint.number) + "_" + str(secondPoint.number))
     Points.remove(firstPoint)
     Points.remove(secondPoint)
-
     newPoint = Point()
     newPoint.X = x
     newPoint.Y = y
@@ -93,7 +90,6 @@ def WindowStart():
 
 
 def WriteResultTable():
-
     with pd.ExcelWriter('Result.xlsx') as writer:
         for df in DataFrameList:
             df.to_excel(writer, index=True)
@@ -150,7 +146,6 @@ def NearPoint(nearPoints):
     distance = list()
     for point in nearPoints:
         distance.append(point.distance)
-
     return nearPoints[distance.index(min(distance))]
 
 
