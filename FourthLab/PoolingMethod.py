@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-
 root = tk.Tk()
 root.resizable(False, False)
 
