@@ -157,13 +157,6 @@ def NearPoint(nearPoints):
 Points = GetPointsFromExcel()
 
 
-def PointsStringData():
-    for point in Points:
-        print(f'(X = {point.X}, Y = {point.Y}) - Number: {point.number}')
-    print(ClassData)
-    print('---------------------------------------------------------------')
-
-
 def ClassInit():
     for classNumber in Points:
         ClassData.append(classNumber.number)
@@ -174,16 +167,12 @@ def main():
         classCount = int(input("Enter number: "))
         ClassInit()
         DataFrameList.append(pd.DataFrame([ClassData], index=[len(Points)]))
-        print(ClassData)
         while True:
             PointDrawing(Points)
             GetNearestPoints()
-            PointsStringData()
             if len(Points) == classCount:
+                WriteResultTable()
                 break
-        WriteResultTable()
-        for dataFrame in DataFrameList:
-            print(dataFrame)
         WindowStart()
 
 
