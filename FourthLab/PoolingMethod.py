@@ -1,4 +1,6 @@
 # Метод объединения
+# Сделать 3-х мерное простр
+# Изменить ценры координат
 import math
 
 import tkinter as tk
@@ -10,8 +12,13 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 root = tk.Tk()
 root.resizable(False, False)
 
+root1 = tk.Tk()
+
+
 figure = plt.figure(figsize=(6, 4), dpi=100)
-plot = figure.add_subplot(111)
+figure1 = plt.figure(figsize=(6, 4), dpi=100)
+TwoDimensionalSpacePlot = figure.add_subplot(111)
+ThreeDimensionalSpacePlot = figure1.add_subplot(projection='3d')
 DataFrameList = list()
 ClassData = list()
 
@@ -36,37 +43,53 @@ def PointDrawing(points):
     for point in points:
         if not point.number.isdigit():
             continue
-        plot.scatter(point.X, point.Y, None, 'black', 'o')
-        plot.annotate(point.number, (point.X, point.Y))
+        TwoDimensionalSpacePlot.scatter(point.X, point.Y, None, 'black', 'o')
+        TwoDimensionalSpacePlot.annotate(point.number, (point.X, point.Y))
     root.title('Лабораторная работа № 4')
-    plot.set_title('Метод объединения')
-    plot.set_xlabel('X')
-    plot.set_ylabel('Y')
+    TwoDimensionalSpacePlot.set_title('Метод объединения')
+    TwoDimensionalSpacePlot.set_xlabel('X')
+    TwoDimensionalSpacePlot.set_ylabel('Y')
 
 
 def PoolingPoints(nearPoint):
-    plot.plot([nearPoint.firstPoint.X, nearPoint.secondPoint.X],
-              [nearPoint.firstPoint.Y, nearPoint.secondPoint.Y],
-              color='red')
+    TwoDimensionalSpacePlot.plot([nearPoint.firstPoint.X, nearPoint.secondPoint.X],
+                                 [nearPoint.firstPoint.Y, nearPoint.secondPoint.Y], color='red')
     CenterPoint(nearPoint.firstPoint, nearPoint.secondPoint)
+    ThreeDimensionalSpacePlot.scatter(1, 3, 5, color='red')
 
 
 def CenterPoint(firstPoint, secondPoint):
-    x = (firstPoint.X + secondPoint.X) / 2
-    y = (firstPoint.Y + secondPoint.Y) / 2
-    plot.scatter(x, y, None, 'blue', 'x')
-    plot.annotate(f'({firstPoint.number}, {secondPoint.number})', (x, y))
     newNumber = f'({firstPoint.number}, {secondPoint.number})'
+    x, y = GetFromInitialPointsCenter(newNumber)
+    TwoDimensionalSpacePlot.scatter(x, y, None, 'blue', 'x')
+    TwoDimensionalSpacePlot.annotate(f'({firstPoint.number}, {secondPoint.number})', (x, y))
+    ChangePointsParameters(firstPoint, secondPoint, x, y, newNumber)
+
+
+def GetFromInitialPointsCenter(numbers):
+    xSum = 0.0
+    ySum = 0.0
+    count = 0
+    for number in numbers:
+        for point in InitialPoints:
+            if point.number == number:
+                xSum += point.X
+                ySum += point.Y
+                count += 1
+    return xSum / count, ySum / count
+
+
+def ChangePointsParameters(firstPoint, secondPoint, x, y, newNumber):
     newNumber = GetNumbersWithoutBrackets(newNumber)
     GetClassData(firstPoint.number, secondPoint.number, newNumber)
-    Points.remove(firstPoint)
-    Points.remove(secondPoint)
+    OperatingPoints.remove(firstPoint)
+    OperatingPoints.remove(secondPoint)
     newPoint = Point()
     newPoint.X = x
     newPoint.Y = y
     newPoint.number = newNumber
-    Points.append(newPoint)
-    dataFrame = pd.DataFrame([ClassData], index=[len(Points)])
+    OperatingPoints.append(newPoint)
+    dataFrame = pd.DataFrame([ClassData], index=[len(OperatingPoints)])
     DataFrameList.append(dataFrame)
 
 
@@ -83,9 +106,15 @@ def GetNumbersWithoutBrackets(newNumber):
 
 
 def WindowStart():
+
+    # scatter1 = FigureCanvasTkAgg(figure1, root1)
+    # scatter1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
+    # root1.mainloop(0)
+
     scatter = FigureCanvasTkAgg(figure, root)
     scatter.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
     root.mainloop(0)
+    plt.show()
 
 
 def WriteResultTable():
@@ -134,9 +163,9 @@ def GetNearestPoint(point, points):
 
 def GetNearestPoints():
     nearestPoints = list()
-    for point in Points:
+    for point in OperatingPoints:
         nearPoint = NearestPoints()
-        nearPoint.firstPoint, nearPoint.secondPoint, nearPoint.distance = GetNearestPoint(point, Points)
+        nearPoint.firstPoint, nearPoint.secondPoint, nearPoint.distance = GetNearestPoint(point, OperatingPoints)
         nearestPoints.append(nearPoint)
     PoolingPoints(NearPoint(nearestPoints))
 
@@ -148,11 +177,12 @@ def NearPoint(nearPoints):
     return nearPoints[distance.index(min(distance))]
 
 
-Points = GetPointsFromExcel()
+OperatingPoints = GetPointsFromExcel()
+InitialPoints = OperatingPoints.copy()
 
 
 def ClassInit():
-    for classNumber in Points:
+    for classNumber in OperatingPoints:
         ClassData.append(classNumber.number)
 
 
@@ -160,11 +190,11 @@ def main():
     if __name__ == '__main__':
         classCount = int(input("Enter number: "))
         ClassInit()
-        DataFrameList.append(pd.DataFrame([ClassData], index=[len(Points)]))
+        DataFrameList.append(pd.DataFrame([ClassData], index=[len(OperatingPoints)]))
         while True:
-            PointDrawing(Points)
+            PointDrawing(OperatingPoints)
             GetNearestPoints()
-            if len(Points) == classCount:
+            if len(OperatingPoints) == classCount:
                 WriteResultTable()
                 break
         WindowStart()

@@ -113,9 +113,9 @@ def DrawingFeatureSpace(featureSpace):
 
 def DrawingLineBetweenFeatureSpace(firstSpaceWithoutClass, secondSpaceWithClass):
     color = GetColorAndSymbolForFeatureSpace(firstSpaceWithoutClass)[0]
-    plot.plot([firstSpaceWithoutClass.end, secondSpaceWithClass.end],
-              [firstSpaceWithoutClass.knot, secondSpaceWithClass.knot],
-              color=color)
+    plot.TwoDimensionalSpacePlot([firstSpaceWithoutClass.end, secondSpaceWithClass.end],
+                                 [firstSpaceWithoutClass.knot, secondSpaceWithClass.knot],
+                                 color=color)
 
 
 def EditExcelFile(index, featureExcelData, className, featureSpaceObjects):
