@@ -5,8 +5,6 @@ from numpy import *
 from collections import Counter
 import tkinter as tk
 from matplotlib.patches import Circle
-import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from os import path
 import mpl_toolkits.mplot3d.art3d as art3d
@@ -185,13 +183,26 @@ def GetWindows():
         dataExcel = pd.read_excel('Points.xlsx').values
     root = tk.Tk()
     root.resizable(False, False)
+    ind = 1
+    classNameArray = list()
     for data in dataExcel:
         c = GetColorAndSymbolForFeatureSpace(data[4])
+        if data[4] in classNameArray:
+            label = ""
+        else:
+            classNameArray.append(data[4])
+            label = data[4]
         if c == '':
             continue
-        ThreeDimensionalSpacePlot.scatter(data[1], data[2], data[3], color=c)
+        if dataExcel.__len__() == ind:
+            c = 'k'
+            label = data[4]
+
+        ThreeDimensionalSpacePlot.scatter(data[1], data[2], data[3], color=c, label=label)
+        ind += 1
     scatter = FigureCanvasTkAgg(figure, root)
     scatter.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
+    plt.legend()
     root.mainloop(0)
     plt.show()
 
@@ -210,20 +221,17 @@ def DrawingLineBetweenFeatureSpace(firstX, firstY, firstZ, second):
     ThreeDimensionalSpacePlot.plot3D([firstX, second.x], [firstY, second.y], [firstZ, second.z], color='k')
 
 
-def DrawingLineBetweenFeatureSpace1(firstX, firstY, firstZ, secondX, secondY, secondZ):
-    ThreeDimensionalSpacePlot.plot3D([firstX, secondX], [firstY, secondY], [firstZ, secondZ], color='k')
-
-
 if __name__ == '__main__':
     imgName = 'H'
-    radius = 2
+    radius = 10
     intersection = GetIntersection(imgName)
     firstProb, secondProb, thirdProb = GetProbCounts(intersection)
     radius, className = GetClassName(firstProb, secondProb, thirdProb, radius)
 
-    if className is Object:
+    if type(className) is Object:
         data = pd.DataFrame([[imgName, firstProb, secondProb, thirdProb, className.typeClass]],
                             columns=['Name', 'Probe 1', 'Probe 2', 'Probe 3', 'Class'])
+        DrawingCircle(firstProb, secondProb, thirdProb, radius)
         DrawingLineBetweenFeatureSpace(firstProb, secondProb, thirdProb, className)
     else:
         data = pd.DataFrame([[imgName, firstProb, secondProb, thirdProb, className]],
