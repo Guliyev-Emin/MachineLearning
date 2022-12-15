@@ -12,13 +12,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 root = tk.Tk()
 root.resizable(False, False)
 
-root1 = tk.Tk()
-
-
 figure = plt.figure(figsize=(6, 4), dpi=100)
-figure1 = plt.figure(figsize=(6, 4), dpi=100)
 TwoDimensionalSpacePlot = figure.add_subplot(111)
-ThreeDimensionalSpacePlot = figure1.add_subplot(projection='3d')
 DataFrameList = list()
 ClassData = list()
 
@@ -55,14 +50,14 @@ def PoolingPoints(nearPoint):
     TwoDimensionalSpacePlot.plot([nearPoint.firstPoint.X, nearPoint.secondPoint.X],
                                  [nearPoint.firstPoint.Y, nearPoint.secondPoint.Y], color='red')
     CenterPoint(nearPoint.firstPoint, nearPoint.secondPoint)
-    ThreeDimensionalSpacePlot.scatter(1, 3, 5, color='red')
 
 
 def CenterPoint(firstPoint, secondPoint):
     newNumber = f'({firstPoint.number}, {secondPoint.number})'
     x, y = GetFromInitialPointsCenter(newNumber)
     TwoDimensionalSpacePlot.scatter(x, y, None, 'blue', 'x')
-    TwoDimensionalSpacePlot.annotate(f'({firstPoint.number}, {secondPoint.number})', (x, y))
+    print(f'({firstPoint.number}, {secondPoint.number})', (x, y))
+    #TwoDimensionalSpacePlot.annotate(f'({firstPoint.number}, {secondPoint.number})', (x, y))
     ChangePointsParameters(firstPoint, secondPoint, x, y, newNumber)
 
 
@@ -106,11 +101,6 @@ def GetNumbersWithoutBrackets(newNumber):
 
 
 def WindowStart():
-
-    # scatter1 = FigureCanvasTkAgg(figure1, root1)
-    # scatter1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
-    # root1.mainloop(0)
-
     scatter = FigureCanvasTkAgg(figure, root)
     scatter.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
     root.mainloop(0)
@@ -151,6 +141,7 @@ def GetNearestPoint(point, points):
             nearestPoint.firstPoint = point
             nearestPoint.secondPoint = secondPoint
             distance = Distance(point, secondPoint)
+            print(point.number, secondPoint.number, distance)
             nearestPoint.distance = distance
             distanceList.append(distance)
             nearestPoints.append(nearestPoint)
@@ -172,8 +163,12 @@ def GetNearestPoints():
 
 def NearPoint(nearPoints):
     distance = list()
+    print("_________________________________________")
     for point in nearPoints:
         distance.append(point.distance)
+        print(f"X:", point.firstPoint.number, f"Y:", point.secondPoint.number, f"Distance:", point.distance)
+    print("_________________________________________" + str(nearPoints[distance.index(min(distance))].firstPoint.number), str(nearPoints[distance.index(min(distance))].secondPoint.number))
+
     return nearPoints[distance.index(min(distance))]
 
 

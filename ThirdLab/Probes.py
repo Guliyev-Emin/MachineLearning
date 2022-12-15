@@ -1,5 +1,5 @@
 import pandas as pd
-from PIL import Image
+from PIL import Image, ImageFilter, ImageDraw
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from numpy import *
 from collections import Counter
@@ -54,6 +54,7 @@ def GetIntersection(name):
     firstProbeData = GetImagePixelData('Probes/FirstProbe.png')
     secondProbeData = GetImagePixelData('Probes/SecondProbe.png')
     thirdProbeData = GetImagePixelData('Probes/ThirdProbe.png')
+    CombiningPictures(name, rf'Images/{name}.png', r'Probes/FirstProbe.png', r'Probes/SecondProbe.png', r'Probes/ThirdProbe.png')
     intersectionPixel = array([[]])
     probesData = list()
     probesData.append(firstProbeData)
@@ -73,6 +74,20 @@ def GetIntersection(name):
                         probe = None
                     intersectionPixel = append(intersectionPixel, [probe, imagePixel])
     return intersectionPixel
+
+
+def CombiningPictures(name, imagePath, firstProbePath, secondProbePath, thirdProbePath):
+    img = GetImagePixelData(imagePath)
+    firstProbe = GetImagePixelData(firstProbePath)
+    secondProbe = GetImagePixelData(secondProbePath)
+    thirdProbe = GetImagePixelData(thirdProbePath)
+    w, h = 50, 50
+    points = img + firstProbe + secondProbe + thirdProbe
+    new_img = Image.new("RGBA", (w, h), color='white')
+    for point in points:
+        new_img.putpixel((point.x, point.y), point.RGB)
+
+    new_img.save(f'Images/{name}_Probes.png', "PNG")
 
 
 def DataFrames(df):
@@ -222,7 +237,7 @@ def DrawingLineBetweenFeatureSpace(firstX, firstY, firstZ, second):
 
 
 if __name__ == '__main__':
-    imgName = 'H'
+    imgName = 'Test'
     radius = 10
     intersection = GetIntersection(imgName)
     firstProb, secondProb, thirdProb = GetProbCounts(intersection)
