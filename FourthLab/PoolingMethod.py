@@ -147,6 +147,60 @@ def WriteResultTable3D():
             GetPoolingDataFrame(DataFrameList3D).to_excel(writer, index=True)
             GetTextResult(DataFrameList3D, "Result_3D.txt")
 
+def WriteResultPointClass():
+    pointsDataFromExcel = pd.read_excel('InitialsPoints.xlsx')
+    df = pd.DataFrame(pointsDataFromExcel)
+    print(df)
+    df["Result_2D"] = pd.Series(["NaN"])
+    df["PointNumber_2D"] = pd.Series(["NaN"])
+    df["Result_3D"] = pd.Series(["NaN"])
+    df["PointNumber_3D"] = pd.Series(["NaN"])
+
+    classNumber = 0
+    for pointObjs in Operating2DPoints:
+        classNumber += 1
+        i = pointObjs.number.replace(')', '')
+        i = i.replace('(', '')
+        i = i.replace(',', '')
+        pointNumbers = i.split(' ')
+        print(pointObjs.number)
+        for pointNumber in pointNumbers:
+            for initialNumber in Initial2DPoints:
+                index = 0
+                for tes in Initial2DPointsWithoutDistinct:
+                    if tes.X == initialNumber.X and tes.Y == initialNumber.Y and initialNumber.number == tes.number:
+                        break
+                    index += 1
+
+                #index = Initial2DPointsWithoutDistinct.index(initialNumber)
+                print(f"Class number: {classNumber} | Initial number: {initialNumber.number} | Point number {pointNumber} | Index: {index} | End: {df.values[index][3]} | Knot: {df.values[index][4]} | X: {initialNumber.X} | Y: {initialNumber.Y}")
+                if initialNumber.number == pointNumber and initialNumber.X == df.values[index][3] and initialNumber.Y == df.values[index][4]:
+                    df.loc[index, ['PointNumber_2D']] = [str(pointNumber)]
+                    df.loc[index, ['Result_2D']] = [classNumber]
+
+    classNumber = 0
+    for pointObjs in Operating3DPoints:
+        classNumber += 1
+        i = pointObjs.number.replace(')', '')
+        i = i.replace('(', '')
+        i = i.replace(',', '')
+        pointNumbers = i.split(' ')
+        for pointNumber in pointNumbers:
+            for initialNumber in Initial3DPoints:
+                index = 0
+                for tes in Initial3DPointsWithoutDistinct:
+                    if tes.X == initialNumber.X and tes.Y == initialNumber.Y and initialNumber.number == tes.number:
+                        break
+                    index += 1
+                if initialNumber.number == pointNumber and initialNumber.X == df.values[index][0] and initialNumber.Y == df.values[index][1] and initialNumber.Z == df.values[index][2]:
+                    df.loc[index, ['PointNumber_3D']] = [str(pointNumber)]
+                    df.loc[index, ['Result_3D']] = [classNumber]
+    print(df)
+    df1 = df.style.set_table_styles([dict(selector='th', props=[('text-align', 'center')])])
+    df1.set_properties(**{'text-align': 'center'}).hide_index()
+    with pd.ExcelWriter('ResultClassPoints.xlsx') as writer:
+        df1.to_excel(writer, index=True)
+
 
 def GetPoolingDataFrame(data):
     return pd.concat(data)
@@ -302,6 +356,8 @@ def Distinct(points):
 # Operating3DPoints = Distinct(GetPointsFromExcelFor3D())
 Operating2DPoints = GetPointsFromExcel()
 Operating3DPoints = GetPointsFromExcelFor3D()
+Initial2DPointsWithoutDistinct = GetPointsFromExcel()
+Initial3DPointsWithoutDistinct = GetPointsFromExcelFor3D()
 Initial2DPoints = Operating2DPoints.copy()
 Initial3DPoints = Operating3DPoints.copy()
 
@@ -330,8 +386,10 @@ def main():
             if (len(Operating2DPoints) == classCount) and (len(Operating3DPoints) == classCount):
                 WriteResultTable()
                 WriteResultTable3D()
+                WriteResultPointClass()
                 break
         WindowStart()
+
 
 
 main()
