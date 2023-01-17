@@ -113,7 +113,7 @@ def DrawingFeatureSpace(featureSpace):
 
 def DrawingLineBetweenFeatureSpace(firstSpaceWithoutClass, secondSpaceWithClass):
     color = GetColorAndSymbolForFeatureSpace(firstSpaceWithoutClass)[0]
-    plot.TwoDimensionalSpacePlot([firstSpaceWithoutClass.end, secondSpaceWithClass.end],
+    plot.plot([firstSpaceWithoutClass.end, secondSpaceWithClass.end],
                                  [firstSpaceWithoutClass.knot, secondSpaceWithClass.knot],
                                  color=color)
 
