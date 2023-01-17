@@ -192,6 +192,7 @@ def main():
         tkinter = GetFeaturesDrawing(featureSpaceWithClassArray)
         if type(classObject) is Space:
             featureSpaceWithoutClass.objectClass = classObject.objectClass
+            DrawingCircle(featureSpaceWithoutClass, radius)
             DrawingFeatureSpace(featureSpaceWithoutClass)
             DrawingLineBetweenFeatureSpace(featureSpaceWithoutClass, classObject)
         else:
